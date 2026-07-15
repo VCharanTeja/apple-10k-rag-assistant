@@ -8,8 +8,7 @@ Business stakeholders often need specific facts from long financial filings (100
 
 ## Live Demo
 
-[Add your Streamlit Cloud link here once deployed]
-
+https://apple-10k-rag-assistant-pnwb4dsgpzgttawjxec7yo.streamlit.app
 ## Approach
 
 - **Ingestion:** Extracted text from Apple's 10-K PDFs (fiscal 2023, 2024, 2025) using `pypdf`
