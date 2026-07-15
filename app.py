@@ -54,7 +54,22 @@ Answer:"""
 st.title("📊 Apple 10-K Q&A")
 st.caption("Ask a question about Apple's 2023–2025 annual reports. Answers are grounded with citations.")
 
-question = st.text_input("Ask a question:")
+st.markdown("**Try an example:**")
+example_questions = [
+    "What were Apple's primary risk factors in 2024 compared to 2023?",
+    "Summarize total net sales by product category for fiscal year 2025.",
+    "How did legal proceedings affect Apple's 2024 financial notes?",
+]
+
+if "question_input" not in st.session_state:
+    st.session_state.question_input = ""
+
+cols = st.columns(len(example_questions))
+for i, q in enumerate(example_questions):
+    if cols[i].button(q, use_container_width=True):
+        st.session_state.question_input = q
+
+question = st.text_input("Ask a question:", value=st.session_state.question_input, key="question_box")
 
 if question:
     with st.spinner("Searching filings and generating answer..."):
@@ -63,7 +78,12 @@ if question:
     st.markdown("### Answer")
     st.write(answer)
 
-    with st.expander("View retrieved sources"):
+    st.markdown("**Sources:**")
+    badge_row = " ".join([f"`{r['source']}, p.{r['page']}`" for r in sources])
+    st.markdown(badge_row)
+
+    with st.expander("View full retrieved passages"):
         for r in sources:
             st.markdown(f"**{r['source']}, page {r['page']}**")
             st.text(r["text"][:300] + "...")
+            st.divider()
