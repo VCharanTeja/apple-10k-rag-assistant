@@ -1,0 +1,8 @@
+streamlit
+openai
+chromadb
+pypdf
+tiktoken
+pandas
+python-dotenv
+rank-bm25
