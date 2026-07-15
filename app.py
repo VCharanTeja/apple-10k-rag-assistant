@@ -61,15 +61,16 @@ example_questions = [
     "How did legal proceedings affect Apple's 2024 financial notes?",
 ]
 
-if "question_input" not in st.session_state:
-    st.session_state.question_input = ""
+if "question_box" not in st.session_state:
+    st.session_state.question_box = ""
 
 cols = st.columns(len(example_questions))
 for i, q in enumerate(example_questions):
     if cols[i].button(q, use_container_width=True):
-        st.session_state.question_input = q
+        st.session_state.question_box = q
+        st.rerun()
 
-question = st.text_input("Ask a question:", value=st.session_state.question_input, key="question_box")
+question = st.text_input("Ask a question:", key="question_box")
 
 if question:
     with st.spinner("Searching filings and generating answer..."):
