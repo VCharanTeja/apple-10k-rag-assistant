@@ -10,7 +10,6 @@ from datetime import datetime
 import time
 import pandas as pd
 
-
 st.set_page_config(page_title="Apple 10-K Q&A", layout="centered")
 
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
@@ -43,14 +42,12 @@ def embed_texts(texts, model="text-embedding-3-small"):
     return [item.embedding for item in response.data]
 
 def search(question, n_results=8, initial_pool=30):
-    
     query_embedding = embed_texts([question])[0]
     vector_results = collection.query(query_embeddings=[query_embedding], n_results=initial_pool)
     vector_candidates = []
     for doc, meta in zip(vector_results["documents"][0], vector_results["metadatas"][0]):
         vector_candidates.append({"text": doc, "source": meta["source"], "page": meta["page"]})
 
-    
     tokenized_query = question.lower().split()
     bm25_scores = bm25_index.get_scores(tokenized_query)
     top_bm25_idx = sorted(range(len(bm25_scores)), key=lambda i: -bm25_scores[i])[:initial_pool]
@@ -59,11 +56,9 @@ def search(question, n_results=8, initial_pool=30):
         for i in top_bm25_idx
     ]
 
-    # Combine and deduplicate
     combined = {c["text"]: c for c in vector_candidates + bm25_candidates}
     candidates = list(combined.values())
 
-    # Rerank the combined pool
     pairs = [[question, c["text"]] for c in candidates]
     scores = reranker.predict(pairs)
     ranked = sorted(zip(candidates, scores), key=lambda x: -x[1])
@@ -116,7 +111,7 @@ def log_query(conn, question, sources, latency):
         (datetime.now().isoformat(), question, source_list, latency)
     )
     conn.commit()
-    
+
 st.title("📊 Apple 10-K Q&A")
 st.caption("Ask a question about Apple's 2023–2025 annual reports. Answers are grounded with citations.")
 
@@ -145,16 +140,14 @@ if question:
         latency = time.time() - start_time
         conn = init_log_db()
         log_query(conn, question, sources, latency)
-        
 
     st.markdown("### Answer")
-    st.markdown(answer.replace("$","\\$"))
+    st.markdown(answer.replace("$", "\\$"))
 
     st.markdown("**Sources:**")
     badge_row = " ".join([f"`{r['source']}, p.{r['page']}`" for r in sources])
     st.markdown(badge_row)
 
-    
     with st.expander("View full retrieved passages"):
         for r in sources:
             st.markdown(f"**{r['source']}, page {r['page']}**")
@@ -167,12 +160,22 @@ with st.expander("📊 View usage stats"):
         conn = init_log_db()
         df = pd.read_sql_query("SELECT * FROM logs ORDER BY timestamp DESC", conn)
         if len(df) > 0:
+            df["timestamp"] = pd.to_datetime(df["timestamp"])
+
             col1, col2 = st.columns(2)
             col1.metric("Total queries", len(df))
             col2.metric("Avg response time (sec)", round(df["latency_seconds"].mean(), 2))
+
+            st.markdown("**Response time per query**")
+            st.bar_chart(df.sort_values("timestamp").reset_index(drop=True)["latency_seconds"])
+
+            st.markdown("**Queries per day**")
+            daily_counts = df.groupby(df["timestamp"].dt.date).size()
+            st.bar_chart(daily_counts)
+
+            st.markdown("**Recent queries**")
             st.dataframe(df[["timestamp", "question", "latency_seconds"]], use_container_width=True)
         else:
             st.write("No queries logged yet.")
     except Exception as e:
         st.write("No logs yet.")
-          
