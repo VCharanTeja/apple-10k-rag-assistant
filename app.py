@@ -16,8 +16,13 @@ st.set_page_config(page_title="Apple 10-K Q&A", layout="centered")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 client = OpenAI(api_key=OPENAI_API_KEY)
 
-chroma_client = chromadb.PersistentClient(path="./chroma_db")
-collection = chroma_client.get_collection("apple-10K")
+@st.cache_resource
+def get_chroma_collection():
+    chroma_client = chromadb.PersistentClient(path="./chroma_db")
+    return chroma_client.get_collection("apple-10K")
+
+collection = get_chroma_collection()
+
 reranker = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
 
 from rank_bm25 import BM25Okapi
