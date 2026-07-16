@@ -2,3 +2,4 @@
 documents/*.pdf
 .ipynb_checkpoints/
 __pycache__/
+query_logs.db
