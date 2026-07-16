@@ -8,7 +8,7 @@ Business stakeholders often need specific facts from long financial filings (100
 
 ## Live Demo
 
-[Try it here](https://apple-10k-rag-assistant-pnwb4dsgpzgttawjxec7yo.streamlit.app)
+[Try it here](https://apple-10k-rag-assistant-pnwb4dsgpzgttawjxec7yo.streamlit.app/)
 
 ## Approach
 
@@ -19,8 +19,8 @@ Business stakeholders often need specific facts from long financial filings (100
 - **Retrieval:** Hybrid search combining semantic similarity (vector search) with keyword matching (BM25), followed by a cross-encoder reranking pass to improve relevance ordering before generation
 - **Generation:** GPT-4o-mini generates answers strictly grounded in retrieved context, with explicit source/page citations and instructions to say "not found" rather than hallucinate
 - **Evaluation:** Built a 5-question test set with known source documents; measured **100% Recall@5** — retrieval correctly found the right source document for every test question
-- **Monitoring:** Every query is logged (question, sources retrieved, response latency) to a local database, with a built-in usage dashboard showing total queries and average response time
-- **Interface:** Streamlit web app with interactive Q&A, clickable example questions, clean citation display, and a usage stats panel
+- **Monitoring:** Every query is logged (question, sources retrieved, response latency) to a local database, powering a live, self-updating usage dashboard within the app — showing total queries, average response time, response time per query, and query volume over time
+- **Interface:** Streamlit web app with interactive Q&A, clickable example questions, clean citation display, and a live usage stats panel
 
 ## Tech Stack
 
@@ -34,7 +34,7 @@ Python · OpenAI API · ChromaDB · Streamlit · pypdf · tiktoken · sentence-t
 - **Cross-encoder reranking** re-scores the top retrieved candidates with a model trained specifically for query-document relevance, improving on similarity search alone
 - **Explicit anti-hallucination prompting** (temperature=0, "say so if the answer isn't in the context") reduces the risk of fabricated answers
 - **A dedicated evaluation step** measures retrieval accuracy quantitatively rather than relying on manual spot-checks
-- **Query logging + a usage dashboard** apply the same monitoring instinct as a BI/reporting tool to the AI system itself — tracking usage patterns and performance over time
+- **Query logging + a live usage dashboard** apply the same monitoring instinct as a BI/reporting tool to the AI system itself — tracking usage patterns and performance over time
 
 ## Known Limitation
 
