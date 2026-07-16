@@ -18,7 +18,7 @@ https://apple-10k-rag-assistant-pnwb4dsgpzgttawjxec7yo.streamlit.app
 - **Retrieval:** Semantic similarity search over chunk embeddings
 - **Generation:** GPT-4o-mini generates answers strictly grounded in retrieved context, with explicit source/page citations and instructions to say "not found" rather than hallucinate
 - **Evaluation:** Built a 5-question test set with known source documents; measured **100% Recall@5** — retrieval correctly found the right source document for every test question
-- **Interface:** Streamlit web app for interactive Q&A
+- **Interface:** Streamlit web app with interactive Q&A, clickable example questions, and clean citation display for verifying answers against source pages
 
 ## Tech Stack
 
